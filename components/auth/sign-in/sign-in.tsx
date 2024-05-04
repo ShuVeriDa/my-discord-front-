@@ -1,13 +1,15 @@
 "use client"
 
-import {FC, MouseEvent, useState} from 'react';
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import Link from "next/link";
-import {signInInputSchema} from "@/lib/zod-validation";
-import {z} from "zod";
+import {FC, MouseEvent, useEffect, useState} from 'react';
+import {emailSchema, passwordSchema} from "@/lib/zod-validation";
 import {AuthFooter} from "@/components/auth/auth-footer/auth-footer";
 import Logo from "@/public/svg/logo.svg";
+import {IError} from "@/services/auth/auth.type";
+import {useAuthQuery} from "@/react-query/useAuthQuery";
+import {errorCatch} from "@/api/api.helper";
+import {Bounce, toast} from "react-toastify";
+import {Field} from "@/components/auth/field/field";
+import {useProfileStore} from "@/hooks/use-profile-store";
 
 interface ISignInProps {
 }
@@ -15,20 +17,47 @@ interface ISignInProps {
 export const SignIn: FC<ISignInProps> = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [errors, setErrors] = useState<z.inferFlattenedErrors<typeof signInInputSchema>>()
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState<IError>({name: false, email: false, password: false})
+  const [isDisabled, setIsDisabled] = useState(true)
 
+  const {setUser, user} = useProfileStore()
   const onChangeEmail = (email: string) => setEmail(email)
   const onChangePassword = (password: string) => setPassword(password)
 
+  const {login} = useAuthQuery()
+  const {mutateAsync: mutateLogin} = login
+
+  useEffect(() => {
+    if (isError.email || isError.name || isError.password  || email.length === 0 || password.length === 0) {
+      setIsDisabled(true)
+    } else {
+      setIsDisabled(false)
+    }
+  }, [email.length, isError,  password.length]);
+
   const onSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    try {
-      const parsedInput = signInInputSchema.safeParse({email, password})
-      if (!parsedInput.success) {
-        setErrors(parsedInput.error.flatten())
-      }
-    } catch (error) {
 
+    try {
+      setIsLoading(true)
+
+      const res = await mutateLogin({email, password})
+      setUser(res.data)
+
+      setIsLoading(false)
+      setEmail('')
+      setPassword('')
+    } catch (error: any) {
+      const message = errorCatch(error)
+      toast(message, {
+        type: "error", autoClose: 2000, position: "bottom-center", transition: Bounce, hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -43,28 +72,14 @@ export const SignIn: FC<ISignInProps> = () => {
       </div>
 
       <div className={"w-full flex flex-col gap-5"}>
-        <div className="w-full flex flex-col gap-2">
-          <label className={"w-full flex gap-1 text-[#b5bac1] text-[12px] font-bold"}>
-            <span>E-mail address</span>
-            <span className="text-[#f23f42]">*</span>
-          </label>
-          <Input onChange={(e) => onChangeEmail(e.currentTarget.value)}/>
-          {errors?.fieldErrors.email ?
-            <p className={"text-[14px] text-[#f23f42]"}>{errors.fieldErrors['email']}</p> : null}
-        </div>
-
-        <div className="w-full flex flex-col gap-2">
-          <label className={"w-full flex gap-1 text-[#b5bac1] text-[12px] font-bold"}>
-            <span>Password</span>
-            <span className="text-[#f23f42]">*</span>
-          </label>
-          <Input onChange={(e) => onChangePassword(e.currentTarget.value)}/>
-          {errors?.fieldErrors.password ?
-            <p className={"text-[14px] text-[#f23f42]"}>{errors.fieldErrors['password']}</p> : null}
-        </div>
+        <Field header={"E-mail address"} onChange={onChangeEmail} schema={emailSchema} setIsError={setIsError}
+               typeError={'email'}/>
+        <Field header={"Password"} onChange={onChangePassword} schema={passwordSchema} setIsError={setIsError}
+               typeError={"password"}/>
       </div>
 
-      <AuthFooter isDisabled={!!errors?.fieldErrors}
+      <AuthFooter isDisabled={isDisabled || isLoading}
+                  isLoading={isLoading}
                   onSubmit={onSubmit}
                   link={"/sign-up"}
                   buttonTitle={"Sign in"}

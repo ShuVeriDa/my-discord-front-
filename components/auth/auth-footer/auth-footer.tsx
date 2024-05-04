@@ -9,10 +9,11 @@ interface IAuthFooterProps {
   buttonTitle: string
   linkTitle: string
   needAccount?: string
+  isLoading: boolean
 }
 
 export const AuthFooter: FC<IAuthFooterProps> = (
-  {isDisabled, linkTitle, buttonTitle, onSubmit, link, needAccount}
+  {isDisabled, linkTitle, buttonTitle, onSubmit, link, needAccount, isLoading}
 ) => {
   return (
     <div className={"flex flex-col gap-2 w-full"}>
@@ -22,7 +23,7 @@ export const AuthFooter: FC<IAuthFooterProps> = (
               onClick={(e) => onSubmit(e)}
               disabled={isDisabled}
       >
-        {buttonTitle}
+        {isLoading ? "Loading" : buttonTitle}
       </Button>
       <div className={"flex gap-1 text-[14px]  leading-4"}>
         {needAccount && <span className={"text-[#949ba4]"}>{needAccount}</span>}
