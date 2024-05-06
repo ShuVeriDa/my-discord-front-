@@ -6,6 +6,7 @@ import {ThemeProvider} from "@/components/providers/theme-provider";
 import {QueryProvider} from "@/components/providers/query-provider";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {SocketProvider} from "@/components/providers/socket-provider";
 
 const font = Open_Sans({subsets: ["latin"]});
 
@@ -27,10 +28,12 @@ export default function RootLayout({
                    enableSystem={false}
                    storageKey="discord-tjeme"
     >
+      <SocketProvider>
       <QueryProvider>
         {children}
         <ToastContainer />
       </QueryProvider>
+      </SocketProvider>
     </ThemeProvider>
     </body>
     </html>

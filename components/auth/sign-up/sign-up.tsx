@@ -9,6 +9,8 @@ import {useAuthQuery} from "@/react-query/useAuthQuery";
 import {IError} from "@/services/auth/auth.type";
 import {Bounce, toast} from "react-toastify";
 import {errorCatch} from "@/api/api.helper";
+import {redirect} from "next/navigation";
+import {useProfileStore} from "@/hooks/use-profile-store";
 
 interface ISignUpProps {
 }
@@ -21,12 +23,19 @@ export const SignUp: FC<ISignUpProps> = () => {
   const [isError, setIsError] = useState<IError>({name: false, email: false, password: false})
   const [isDisabled, setIsDisabled] = useState(true)
 
+  const { user} = useProfileStore()
   const onChangeEmail = (email: string) => setEmail(email)
   const onChangeName = (name: string) => setName(name)
   const onChangePassword = (password: string) => setPassword(password)
 
   const {register} = useAuthQuery()
   const {mutateAsync: mutateRegister} = register
+
+  useEffect(() => {
+    if(user) {
+      redirect("/")
+    }
+  }, [user]);
 
   useEffect(() => {
     if (isError.email || isError.name || isError.password || name.length === 0 || email.length === 0 || password.length === 0) {

@@ -10,6 +10,7 @@ import {errorCatch} from "@/api/api.helper";
 import {Bounce, toast} from "react-toastify";
 import {Field} from "@/components/auth/field/field";
 import {useProfileStore} from "@/hooks/use-profile-store";
+import {redirect} from "next/navigation";
 
 interface ISignInProps {
 }
@@ -27,6 +28,12 @@ export const SignIn: FC<ISignInProps> = () => {
 
   const {login} = useAuthQuery()
   const {mutateAsync: mutateLogin} = login
+
+  useEffect(() => {
+    if(user) {
+      redirect("/")
+    }
+  }, [user]);
 
   useEffect(() => {
     if (isError.email || isError.name || isError.password  || email.length === 0 || password.length === 0) {
