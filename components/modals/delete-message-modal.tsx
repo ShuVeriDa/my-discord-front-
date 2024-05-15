@@ -49,7 +49,7 @@ export const DeleteMessageModal: FC<IDeleteMessageModalProps> = () => {
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold">
-            Delete Channel
+            Delete Message
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
             Are you sure want to do this? <br />

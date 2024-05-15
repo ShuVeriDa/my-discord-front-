@@ -18,5 +18,15 @@ export const channelService = {
     const res = await instance.post<IChannel>('/channels', data);
 
     return res.data
+  },
+
+  async deleteChannel(serverId: string, channelId: string) {
+    const {data} = await instance.delete<string>(`/channels/${channelId}`, {
+      data: {
+        serverId
+      }
+    });
+
+    return data
   }
 }

@@ -45,7 +45,24 @@ export const useChannelQuery = (serverId?: string, channelId?: string) => {
     },
   })
 
+  const deleteChannel = useMutation({
+    mutationKey: ["deleteChannel"],
+    mutationFn: (serverId: string) => channelService.deleteChannel(serverId, channelId!),
+    onSuccess: () => {
+      client.invalidateQueries({queryKey: ['fetchOneServer']})
+    },
+    onError(error: Error) {
+      const message = errorCatch(error)
+      toast(message, {
+        type: "error", autoClose: 2000, position: "bottom-center", transition: Bounce, hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      })
+    },
+  })
+
   return useMemo(() => ({
-    fetchChannelById, createChannel, fetchChannels
-  }), [fetchChannelById, createChannel, fetchChannels] )
+    fetchChannelById, createChannel, fetchChannels, deleteChannel
+  }), [fetchChannelById, createChannel, fetchChannels, deleteChannel] )
 }

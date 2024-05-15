@@ -11,9 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import {useModal} from "@/hooks/use-modal-store";
 import {Button} from "@/components/ui/button";
-import axios from "axios";
-import {useParams, useRouter} from "next/navigation";
-import qs from "query-string"
+import {useRouter} from "next/navigation";
+import {useChannelQuery} from "@/react-query/useChannelQuery";
 
 interface IDeleteChannelModalProps {
 }
@@ -25,19 +24,16 @@ export const DeleteChannelModal: FC<IDeleteChannelModalProps> = () => {
   const isModalOpen = isOpen && type === "deleteChannel"
   const { channel, server} = data
 
+  const {deleteChannel} = useChannelQuery(server?.id, channel?.id)
+  const {mutateAsync} = deleteChannel
+
   const [isLoading, setIsLoading] = useState(false)
 
   const onClick = async () => {
     try {
       setIsLoading(true)
-      const url = qs.stringifyUrl({
-        url: `/api/channels/${channel?.id}`,
-        query: {
-          serverId: server?.id
-        }
-      })
 
-      await axios.delete(url)
+      await mutateAsync(server?.id!)
 
       onClose()
       router.refresh()

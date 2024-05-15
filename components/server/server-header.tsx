@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {ChevronDown, LogOut, Plus, PlusCircle, Settings, Trash, UserPlus, Users} from "lucide-react";
+import {ChevronDown, LogOut, PlusCircle, Settings, Trash, UserPlus, Users} from "lucide-react";
 import {useModal} from "@/hooks/use-modal-store";
 import {IServerWithMembersWithProfiles} from "@/services/servers/servers.type";
 import {MemberRole} from "@/services/members/members.type";

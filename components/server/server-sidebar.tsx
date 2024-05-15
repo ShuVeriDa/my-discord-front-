@@ -15,7 +15,6 @@ import {ChannelType} from "@/services/channel/channel.type";
 import {MemberRole} from "@/services/members/members.type";
 import {useProfileStore} from "@/hooks/use-profile-store";
 import {useServerQuery} from "@/react-query/useServerQuery";
-import {useChannelQuery} from "@/react-query/useChannelQuery";
 
 interface IServerSidebarProps {
   serverId: string
