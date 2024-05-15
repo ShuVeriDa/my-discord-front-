@@ -15,6 +15,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import qs from "query-string";
 import {param} from "ts-interface-checker";
 import {ChannelType} from "@/services/channel/channel.type";
+import {useChannelQuery} from "@/react-query/useChannelQuery";
 
 interface IEditChannelModalProps {
 }
@@ -35,18 +36,20 @@ export const EditChannelModal: FC<IEditChannelModalProps> = () => {
 
   const isModalOpen = isOpen && type === "editChannel"
 
-  const { channel, server} = data
+  const {channel, server} = data
+  const {updateChannel} = useChannelQuery(server?.id, channel?.id)
+  const {mutateAsync} = updateChannel
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      type: channel?.type ||  ChannelType.TEXT
+      type: channel?.type || ChannelType.TEXT
     }
   })
 
   useEffect(() => {
-    if(channel) {
+    if (channel) {
       form.setValue("name", channel.name)
       form.setValue("type", channel.type)
     }
@@ -57,13 +60,12 @@ export const EditChannelModal: FC<IEditChannelModalProps> = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const url = qs.stringifyUrl({
-        url: `/api/channels/${channel?.id}`,
-        query: {
-          serverId: server?.id
-        }
-      })
-      await axios.patch(url, values)
+      await mutateAsync(
+        {
+          serverId: server?.id as string,
+          name: values.name,
+          type: values.type
+        })
 
       form.reset()
       router.refresh()
@@ -83,7 +85,7 @@ export const EditChannelModal: FC<IEditChannelModalProps> = () => {
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold">
-           Edit Channel
+            Edit Channel
           </DialogTitle>
         </DialogHeader>
 
@@ -124,7 +126,7 @@ export const EditChannelModal: FC<IEditChannelModalProps> = () => {
                                     focus:ring-0 text-black ring-offset-0
                                     focus:ring-offset-0 capitalize outline-none"
                                  >
-                                  <SelectValue placeholder="Select a channel type"/>
+                                   <SelectValue placeholder="Select a channel type"/>
                                  </SelectTrigger>
                                </FormControl>
                                <SelectContent>
@@ -138,7 +140,7 @@ export const EditChannelModal: FC<IEditChannelModalProps> = () => {
                                  })}
                                </SelectContent>
                              </Select>
-                             <FormMessage />
+                             <FormMessage/>
                            </FormItem>
                          )}
                          name={"type"}

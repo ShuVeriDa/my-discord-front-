@@ -3,7 +3,7 @@ import {channelService} from "@/services/channel/channel.service";
 import {useMemo} from "react";
 import {errorCatch} from "@/api/api.helper";
 import {Bounce, toast} from "react-toastify";
-import {ICreateChannel} from "@/services/channel/channel.type";
+import {ICreateChannel, IUpdateChannel} from "@/services/channel/channel.type";
 
 export const useChannelQuery = (serverId?: string, channelId?: string) => {
   const fetchChannels = useQuery({
@@ -45,6 +45,23 @@ export const useChannelQuery = (serverId?: string, channelId?: string) => {
     },
   })
 
+  const updateChannel = useMutation({
+    mutationKey: ["updateChannel"],
+    mutationFn: (data: IUpdateChannel) => channelService.updateChannel(data, channelId!),
+    onSuccess: () => {
+      client.invalidateQueries({queryKey: ['fetchOneServer']})
+    },
+    onError(error: Error) {
+      const message = errorCatch(error)
+      toast(message, {
+        type: "error", autoClose: 2000, position: "bottom-center", transition: Bounce, hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      })
+    },
+  })
+
   const deleteChannel = useMutation({
     mutationKey: ["deleteChannel"],
     mutationFn: (serverId: string) => channelService.deleteChannel(serverId, channelId!),
@@ -63,6 +80,6 @@ export const useChannelQuery = (serverId?: string, channelId?: string) => {
   })
 
   return useMemo(() => ({
-    fetchChannelById, createChannel, fetchChannels, deleteChannel
-  }), [fetchChannelById, createChannel, fetchChannels, deleteChannel] )
+    fetchChannelById, createChannel, fetchChannels, deleteChannel, updateChannel
+  }), [fetchChannelById, createChannel, fetchChannels, deleteChannel, updateChannel] )
 }

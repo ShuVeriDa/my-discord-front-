@@ -14,6 +14,12 @@ export interface ICreateChannel {
   type: ChannelType
 }
 
+export interface IUpdateChannel {
+  serverId: string
+  name?: string
+  type?: ChannelType
+}
+
 export interface IChannel {
   id: string
   name: string

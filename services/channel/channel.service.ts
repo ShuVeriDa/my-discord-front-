@@ -1,5 +1,5 @@
 import {instance} from "@/api/axios";
-import {IChannel, ICreateChannel} from "@/services/channel/channel.type";
+import {IChannel, ICreateChannel, IUpdateChannel} from "@/services/channel/channel.type";
 
 export const channelService = {
   async fetchChannels(serverId: string) {
@@ -16,6 +16,12 @@ export const channelService = {
 
   async createChannel(data: ICreateChannel) {
     const res = await instance.post<IChannel>('/channels', data);
+
+    return res.data
+  },
+
+  async updateChannel(data: IUpdateChannel, channelId: string) {
+    const res = await instance.patch<IChannel>(`/channels/${channelId}`, data);
 
     return res.data
   },
