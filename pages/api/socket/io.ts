@@ -1,13 +1,22 @@
 import {Server as NetServer} from "http"
-import {NextApiRequest} from "next";
+import {NextApiRequest, NextApiResponse} from "next";
 import {Server as ServerIO} from "socket.io"
-import {NextApiResponseServerIo} from "@/types";
+import {Socket} from "net";
+
 
 export const config = {
   api: {
     bodyParser: false
   }
 }
+
+export type NextApiResponseServerIo = NextApiResponse & {
+  socket: Socket & {
+    server: NetServer & {
+      io: ServerIO;
+    };
+  };
+};
 
 const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
   if (!res.socket.server.io) {

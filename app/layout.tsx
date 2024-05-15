@@ -7,6 +7,7 @@ import {QueryProvider} from "@/components/providers/query-provider";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {SocketProvider} from "@/components/providers/socket-provider";
+import {ModalProvider} from "@/components/providers/modal-provider";
 
 const font = Open_Sans({subsets: ["latin"]});
 
@@ -21,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressContentEditableWarning>
     <body className={cn(font.className, "bg-white dark:bg-[#313338]")}>
     <ThemeProvider attribute="class"
                    defaultTheme="dark"
@@ -29,10 +30,11 @@ export default function RootLayout({
                    storageKey="discord-tjeme"
     >
       <SocketProvider>
-      <QueryProvider>
-        {children}
-        <ToastContainer />
-      </QueryProvider>
+        <QueryProvider>
+        <ModalProvider/>
+          {children}
+          <ToastContainer/>
+        </QueryProvider>
       </SocketProvider>
     </ThemeProvider>
     </body>
