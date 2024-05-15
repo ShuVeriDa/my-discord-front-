@@ -18,3 +18,13 @@ export interface IServer {
 export type IServerWithMembersWithProfiles = IServer & {
   members: (IMember & { profile: IProfile })[];
 };
+
+export interface ICreateServer {
+  name: string,
+  imageUrl: string
+}
+
+export interface IUpdateServer {
+  name?: string,
+  imageUrl?: string
+}

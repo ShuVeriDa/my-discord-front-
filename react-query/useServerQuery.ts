@@ -1,8 +1,9 @@
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {serversService} from "@/services/servers/servers.service";
 import {useMemo} from "react";
 import {errorCatch} from "@/api/api.helper";
 import {Bounce, toast} from "react-toastify";
+import {ICreateServer, IUpdateServer} from "@/services/servers/servers.type";
 
 export const useServerQuery = (serverId?: string, inviteCode?: string) => {
   const fetchAllServers = useQuery({
@@ -27,9 +28,29 @@ export const useServerQuery = (serverId?: string, inviteCode?: string) => {
     queryFn: () => serversService.getOneServerByProfileId(),
   })
 
+  const client = useQueryClient()
+
   const createServer = useMutation({
     mutationKey: ['createServer'],
-    mutationFn: (data: { name: string, imageUrl: string }) => serversService.createServer(data),
+    mutationFn: (data: ICreateServer) => serversService.createServer(data),
+    onError(error: Error) {
+      const message = errorCatch(error)
+      toast(message, {
+        type: "error", autoClose: 2000, position: "bottom-center", transition: Bounce, hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      })
+    }
+  })
+
+  const updateServer = useMutation({
+    mutationKey: ['updateServer'],
+    mutationFn: (data: IUpdateServer) => serversService.updateServer(data, serverId!),
+    onSuccess: () => {
+      client.invalidateQueries({queryKey: ['fetchAllServers']})
+      client.invalidateQueries({queryKey: ["fetchOneServer"]})
+    },
     onError(error: Error) {
       const message = errorCatch(error)
       toast(message, {
@@ -42,6 +63,6 @@ export const useServerQuery = (serverId?: string, inviteCode?: string) => {
   })
 
   return useMemo(() => ({
-    fetchAllServers, fetchOneServer, fetchOneServerByInviteCode, getOneServerByProfileId, createServer
-  }), [fetchAllServers, fetchOneServer, fetchOneServerByInviteCode, getOneServerByProfileId, createServer])
+    fetchAllServers, fetchOneServer, fetchOneServerByInviteCode, getOneServerByProfileId, createServer, updateServer
+  }), [fetchAllServers, fetchOneServer, fetchOneServerByInviteCode, getOneServerByProfileId, createServer, updateServer])
 }

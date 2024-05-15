@@ -14,7 +14,7 @@ interface INavigationSidebarProps {
 }
 
 export const NavigationSidebar: FC<INavigationSidebarProps> =  () => {
-  const {fetchAllServers, fetchOneServer} = useServerQuery("f1e652f8-89c7-4a71-a5a1-7e82dc92a83c")
+  const {fetchAllServers} = useServerQuery()
   const {data: servers, isSuccess} = fetchAllServers
 
   const {user} = useProfileStore()

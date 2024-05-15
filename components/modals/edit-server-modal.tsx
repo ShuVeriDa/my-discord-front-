@@ -1,6 +1,6 @@
 "use client"
 
-import {FC, useEffect, useState} from 'react';
+import {FC, useEffect} from 'react';
 import {
   Dialog,
   DialogContent,
@@ -16,9 +16,9 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {FileUpload} from "@/components/file-upload";
-import axios from "axios";
 import {useRouter} from "next/navigation";
 import {useModal} from "@/hooks/use-modal-store";
+import {useServerQuery} from "@/react-query/useServerQuery";
 
 interface ICreateServerModalProps {
 }
@@ -40,6 +40,9 @@ export const EditServerModal: FC<ICreateServerModalProps> = () => {
 
   const {server} = data
 
+  const {updateServer} = useServerQuery(server?.id)
+  const {mutateAsync} = updateServer
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,7 +62,7 @@ export const EditServerModal: FC<ICreateServerModalProps> = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await axios.patch(`/api/servers/${server?.id}`, values)
+      await mutateAsync(values)
 
       form.reset()
       router.refresh()

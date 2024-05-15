@@ -1,5 +1,5 @@
 import {instance} from "@/api/axios";
-import {IServer, IServerWithMembersWithProfiles} from "@/services/servers/servers.type";
+import {ICreateServer, IServer, IServerWithMembersWithProfiles, IUpdateServer} from "@/services/servers/servers.type";
 
 export const serversService = {
   async getAllServers() {
@@ -26,8 +26,13 @@ export const serversService = {
     return data
   },
 
-  async createServer(data: { name: string, imageUrl: string }) {
+  async createServer(data: ICreateServer) {
     const res = await instance.post<IServer>(`/servers`, data)
+    return res.data
+  },
+
+  async updateServer(data: IUpdateServer, serverId: string) {
+    const res = await instance.patch<IServer>(`/servers/${serverId}`, data)
     return res.data
   }
 }

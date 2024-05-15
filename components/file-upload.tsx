@@ -44,7 +44,7 @@ export const FileUpload: FC<IFileUploadProps> = ({endpoint, value, onChange}) =>
     setPreviewOpen(true)
   };
 
-  const handleChange: UploadProps['onChange'] = ({fileList: newFileList}) => {
+  const handleChange: UploadProps['onChange'] = async ({fileList: newFileList}) => {
     setFileList(newFileList);
   }
 
@@ -107,7 +107,7 @@ export const FileUpload: FC<IFileUploadProps> = ({endpoint, value, onChange}) =>
         />
       )}
 
-      <Button onClick={onSend}> Submit</Button>
+      <Button onClick={onSend}>Submit</Button>
     </>
   );
 };
