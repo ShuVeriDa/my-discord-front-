@@ -83,6 +83,24 @@ export const useServerQuery = (serverId?: string, inviteCode?: string) => {
     }
   })
 
+  const leaveServer = useMutation({
+    mutationKey: ['leaveServer'],
+    mutationFn: () => serversService.leaveServer(serverId!),
+    onSuccess: () => {
+      client.invalidateQueries({queryKey: ['fetchAllServers']})
+      // client.invalidateQueries({queryKey: ["fetchOneServer"]})
+    },
+    onError(error: Error) {
+      const message = errorCatch(error)
+      toast(message, {
+        type: "error", autoClose: 2000, position: "bottom-center", transition: Bounce, hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      })
+    }
+  })
+
   return useMemo(() => ({
     fetchAllServers,
     fetchOneServer,
@@ -90,7 +108,8 @@ export const useServerQuery = (serverId?: string, inviteCode?: string) => {
     getOneServerByProfileId,
     createServer,
     updateServer,
-    deleteServer
+    deleteServer,
+    leaveServer
   }), [
     fetchAllServers,
     fetchOneServer,
@@ -98,6 +117,7 @@ export const useServerQuery = (serverId?: string, inviteCode?: string) => {
     getOneServerByProfileId,
     createServer,
     updateServer,
-    deleteServer
+    deleteServer,
+    leaveServer
   ])
 }

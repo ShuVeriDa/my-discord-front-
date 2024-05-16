@@ -40,5 +40,11 @@ export const serversService = {
     const {data} = await instance.delete<string>(`/servers/${serverId}`)
 
     return data
+  },
+
+  async leaveServer(serverId: string) {
+    const {data} = await instance.patch<string>(`/servers/${serverId}/leave`)
+
+    return data
   }
 }

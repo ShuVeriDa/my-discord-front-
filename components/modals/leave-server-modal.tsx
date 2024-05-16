@@ -13,6 +13,7 @@ import {useModal} from "@/hooks/use-modal-store";
 import {Button} from "@/components/ui/button";
 import axios from "axios";
 import {useRouter} from "next/navigation";
+import {useServerQuery} from "@/react-query/useServerQuery";
 
 interface ILeaveServerModalProps {
 }
@@ -23,13 +24,16 @@ export const LeaveServerModal: FC<ILeaveServerModalProps> = () => {
   const isModalOpen = isOpen && type === "leaveServer"
   const {server} = data
 
+  const {leaveServer} = useServerQuery(server?.id)
+  const {mutateAsync} = leaveServer
+
   const [isLoading, setIsLoading] = useState(false)
 
   const onClick = async () => {
     try {
       setIsLoading(true)
 
-      await axios.patch(`/api/servers/${server?.id}/leave`)
+      await mutateAsync()
 
       onClose()
       router.refresh()
