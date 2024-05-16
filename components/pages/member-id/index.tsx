@@ -22,7 +22,6 @@ interface IMemberIdProps {
 
 export const MemberId: FC<IMemberIdProps> = ({params, searchParams}) => {
   const {user: profile} = useProfileStore()
-  console.log("MemberId")
 
   if (!profile) {
     return redirect("/sign-in")

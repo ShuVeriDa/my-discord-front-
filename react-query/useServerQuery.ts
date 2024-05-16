@@ -12,7 +12,7 @@ export const useServerQuery = (serverId?: string, inviteCode?: string) => {
   })
 
   const fetchOneServer = useQuery({
-    queryKey: ["fetchOneServer"],
+    queryKey: ["fetchOneServer", serverId],
     queryFn: () => serversService.getOneServerById(serverId!),
     enabled: !!serverId,
   })
@@ -33,6 +33,9 @@ export const useServerQuery = (serverId?: string, inviteCode?: string) => {
   const createServer = useMutation({
     mutationKey: ['createServer'],
     mutationFn: (data: ICreateServer) => serversService.createServer(data),
+    onSuccess: () => {
+      client.invalidateQueries({queryKey: ['fetchAllServers']})
+    },
     onError(error: Error) {
       const message = errorCatch(error)
       toast(message, {
@@ -62,7 +65,39 @@ export const useServerQuery = (serverId?: string, inviteCode?: string) => {
     }
   })
 
+  const deleteServer = useMutation({
+    mutationKey: ['deleteServer'],
+    mutationFn: () => serversService.deleteServer(serverId!),
+    onSuccess: () => {
+      client.invalidateQueries({queryKey: ['fetchAllServers']})
+      // client.invalidateQueries({queryKey: ["fetchOneServer"]})
+    },
+    onError(error: Error) {
+      const message = errorCatch(error)
+      toast(message, {
+        type: "error", autoClose: 2000, position: "bottom-center", transition: Bounce, hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      })
+    }
+  })
+
   return useMemo(() => ({
-    fetchAllServers, fetchOneServer, fetchOneServerByInviteCode, getOneServerByProfileId, createServer, updateServer
-  }), [fetchAllServers, fetchOneServer, fetchOneServerByInviteCode, getOneServerByProfileId, createServer, updateServer])
+    fetchAllServers,
+    fetchOneServer,
+    fetchOneServerByInviteCode,
+    getOneServerByProfileId,
+    createServer,
+    updateServer,
+    deleteServer
+  }), [
+    fetchAllServers,
+    fetchOneServer,
+    fetchOneServerByInviteCode,
+    getOneServerByProfileId,
+    createServer,
+    updateServer,
+    deleteServer
+  ])
 }

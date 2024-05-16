@@ -12,7 +12,6 @@ interface IMemberIdPageProps {
 }
 
 const MemberIdPage: NextPage<IMemberIdPageProps> =  ({ params, searchParams }) => {
-  console.log("MemberIdPage")
   return <MemberId searchParams={searchParams} params={params}/>
 };
 export default MemberIdPage;

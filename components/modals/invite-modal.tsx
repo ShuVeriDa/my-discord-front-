@@ -1,14 +1,14 @@
 "use client"
 
 import {FC, useState} from 'react';
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useModal} from "@/hooks/use-modal-store";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Check, Copy, RefreshCw} from "lucide-react";
 import {useOrigin} from "@/hooks/use-origin";
-import axios from "axios";
+import {useInviteCode} from "@/react-query/useInviteCode";
 
 interface IInviteModalProps {
 }
@@ -22,6 +22,9 @@ export const InviteModal: FC<IInviteModalProps> = () => {
 
   const [copied, setCopied] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  const {refreshCode} = useInviteCode(server?.id)
+  const {mutateAsync} = refreshCode
 
   const inviteUrl = `${origin}/invite/${server?.inviteCode}`
 
@@ -37,7 +40,7 @@ export const InviteModal: FC<IInviteModalProps> = () => {
   const onNew = async () => {
     try {
       setIsLoading(true)
-      const {data} = await axios.patch(`/api/servers/${server?.id}/invite-code`)
+      const data = await mutateAsync()
 
       onOpen("invite", {server: data})
     } catch (error) {

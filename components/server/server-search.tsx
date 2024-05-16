@@ -42,7 +42,6 @@ export const ServerSearch: FC<IServerSearchProps> = ({data}) => {
   }, []);
 
   const onClickHandler = ({ id, type }: { id: string, type: "channel" | "member"}) => {
-    console.log(id, type)
     setOpen(false);
 
     if (type === "member") {

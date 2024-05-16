@@ -1,7 +1,6 @@
 "use client"
 
-import {FC} from 'react';
-import {useProfileStore} from "@/hooks/use-profile-store";
+import {FC, useEffect} from 'react';
 import {redirect} from "next/navigation";
 import {useServerQuery} from "@/react-query/useServerQuery";
 import {useInviteCode} from "@/react-query/useInviteCode";
@@ -13,29 +12,29 @@ interface IInviteCodeProps {
 }
 
 export const InviteCode: FC<IInviteCodeProps> = ({params}) => {
-  const {user: profile} = useProfileStore()
-
-  if (!profile) {
-    return redirect("/sign-in")
-  }
-
+  // const {user: profile} = useProfileStore()
   if (!params.inviteCode) {
-    return redirect("/");
+    redirect("/");
   }
 
   const {fetchOneServerByInviteCode} = useServerQuery(undefined, params.inviteCode)
-  const {data : existingServer} = fetchOneServerByInviteCode
+  const {data: existingServer} = fetchOneServerByInviteCode
+  const {joinServer} = useInviteCode()
+  const {mutateAsync} = joinServer
 
-  if (existingServer) {
-    return redirect(`/servers/${existingServer.id}`);
-  }
+  useEffect(() => {
+    if (existingServer) {
+      return redirect(`/servers/${existingServer.id}`);
+    }
 
-  const {joinServer} = useInviteCode(params.inviteCode)
-  const {data: server} = joinServer
+    if (!existingServer) {
+      (async () => {
+        const server = await mutateAsync(params.inviteCode)
+        return redirect(`/servers/${server?.id}`);
+      })()
+    }
+  }, [existingServer, mutateAsync, params.inviteCode]);
 
-  if (server) {
-    return redirect(`/servers/${server.id}`);
-  }
 
   return null;
 };

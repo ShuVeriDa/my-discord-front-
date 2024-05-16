@@ -21,6 +21,7 @@ import {useRouter} from "next/navigation";
 import {useModal} from "@/hooks/use-modal-store";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useServerQuery} from "@/react-query/useServerQuery";
 
 interface ICreateServerModalProps {
 }
@@ -48,11 +49,14 @@ export const CreateServerModal: FC<ICreateServerModalProps> = () => {
     }
   })
 
+  const {createServer} = useServerQuery()
+  const {mutateAsync} = createServer
+
   const isLoading = form.formState.isSubmitting
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await axios.post("/api/servers", values)
+      await mutateAsync(values)
 
       form.reset()
       router.refresh()

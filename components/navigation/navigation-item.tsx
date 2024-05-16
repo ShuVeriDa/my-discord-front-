@@ -20,7 +20,7 @@ export const NavigationItem: FC<INavigationItemProps> = ({name, imageUrl, id}) =
     router.push(`/servers/${id}`)
   }
 
-  const url = `http://localhost:4000${imageUrl}`
+  const url = `${process.env.NEXT_PUBLIC_API_URL_WITHOUT_API}${imageUrl}`
 
   return (
     <ActionTooltip

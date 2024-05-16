@@ -21,12 +21,12 @@ interface IChannelIdProps {
 export const ChannelId: FC<IChannelIdProps> = ({params}) => {
   const { user: profile} =  useProfileStore()
 
-  const {fetchChannelById} = useChannelQuery(params.serverId, params.channelId)
+  const {fetchChannelById} = useChannelQuery(undefined, params.channelId)
   const {data: channel, mutate, isPending:isPendingChannel, } = fetchChannelById
 
   useEffect(() => {
-    mutate()
-  }, [mutate]);
+    mutate(params.serverId)
+  }, [mutate, params.serverId]);
 
   const {fetchCurrentMember} = useMemberQuery(params.serverId)
   const {data: member,  isPending:isPendingMember} = fetchCurrentMember

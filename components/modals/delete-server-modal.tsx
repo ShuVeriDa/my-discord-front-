@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import {useModal} from "@/hooks/use-modal-store";
 import {Button} from "@/components/ui/button";
-import axios from "axios";
 import {useRouter} from "next/navigation";
+import {useServerQuery} from "@/react-query/useServerQuery";
 
 interface IDeleteServerModalProps {
 }
@@ -24,13 +24,16 @@ export const DeleteServerModal: FC<IDeleteServerModalProps> = () => {
   const isModalOpen = isOpen && type === "deleteServer"
   const {server} = data
 
+  const {deleteServer} = useServerQuery(server?.id)
+  const {mutateAsync} = deleteServer
+
   const [isLoading, setIsLoading] = useState(false)
 
   const onClick = async () => {
     try {
       setIsLoading(true)
 
-      await axios.delete(`/api/servers/${server?.id}`)
+      await mutateAsync()
 
       onClose()
       router.refresh()

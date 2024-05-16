@@ -14,7 +14,6 @@ interface IServerIdProps {
 export const ServerId: FC<IServerIdProps> = ({params}) => {
   const {fetchOneServer} = useServerQuery(params.serverId)
   const {data: server, isSuccess} = fetchOneServer
-  console.log({server}, "serverID")
 
   const {user} = useProfileStore()
 

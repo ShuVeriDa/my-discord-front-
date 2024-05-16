@@ -6,5 +6,11 @@ export const inviteCodeService = {
     const {data} = await instance.patch<IServer>(`/invites`, {inviteCode})
 
     return data
+  },
+
+  async refreshCode(serverId: string) {
+    const {data} = await instance.patch<IServer>(`/invites/${serverId}`)
+
+    return data
   }
 }

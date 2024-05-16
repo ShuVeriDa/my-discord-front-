@@ -34,5 +34,11 @@ export const serversService = {
   async updateServer(data: IUpdateServer, serverId: string) {
     const res = await instance.patch<IServer>(`/servers/${serverId}`, data)
     return res.data
+  },
+
+  async deleteServer(serverId: string) {
+    const {data} = await instance.delete<string>(`/servers/${serverId}`)
+
+    return data
   }
 }

@@ -16,7 +16,7 @@ export const useChannelQuery = (serverId?: string, channelId?: string) => {
 
   const fetchChannelById = useMutation({
     mutationKey: ["fetchChannelById"],
-    mutationFn: () => channelService.fetchChannelById(serverId!, channelId!),
+    mutationFn: (serverId: string) => channelService.fetchChannelById(serverId, channelId!),
     onError(error: Error) {
       const message = errorCatch(error)
       toast(message, {
